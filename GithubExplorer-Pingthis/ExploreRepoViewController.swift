@@ -11,6 +11,11 @@ import UIKit
 class ExploreRepoViewController : UITableViewController {
     
     var repos : [Repository] = []
+    var filteredRepos : [Repository]? {
+        didSet {
+            self.tableView.reloadData()
+        }
+    }
     
     var insertionCallback : ((Repository) -> ())?
 
@@ -24,38 +29,48 @@ class ExploreRepoViewController : UITableViewController {
         }
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.title = "Github Repositories"
+        self.navigationController?.navigationBar.prefersLargeTitles = true
+        let searchController = UISearchController.init()
+        searchController.searchBar.delegate = self
+        self.navigationItem.searchController = searchController
+    }
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if self.filteredRepos != nil {
+            return self.filteredRepos!.count
+        }
         return self.repos.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        var cell = UITableViewCell.init(style: .subtitle, reuseIdentifier: "ExploreRepoCell")
-        cell.textLabel?.text = self.repos[indexPath.row].name
-        cell.detailTextLabel?.text = self.repos[indexPath.row].description ?? "No description available."
+        let cell = UITableViewCell.init(style: .subtitle, reuseIdentifier: nil)
+        let currentRepo = self.filteredRepos ?? self.repos
+        cell.textLabel?.text = currentRepo[indexPath.row].name
+        cell.detailTextLabel?.text = currentRepo[indexPath.row].description ?? "No description available."
         cell.detailTextLabel?.numberOfLines = 0
         return cell
-    }
-    
-    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let label = UILabel.init()
-        label.text = "Select a repository to be added to your Watchlist"
-        label.numberOfLines = 0
-        label.font = UIFont.systemFont(ofSize: 24, weight: .medium)
-        var view = UIView.init()
-        view.backgroundColor = .secondarySystemBackground
-        view.addSubview(label)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            label.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
-            label.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8),
-            label.topAnchor.constraint(equalTo: view.topAnchor, constant: 8),
-            label.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -8),
-        ])
-        return view
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         self.tableView.deselectRow(at: indexPath, animated: true)
         insertionCallback?(self.repos[indexPath.row])
+    }
+}
+
+extension ExploreRepoViewController : UISearchBarDelegate {
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchText.isEmpty {
+            self.filteredRepos = nil
+            return
+        }
+        self.filteredRepos = self.repos.filter({ $0.name.lowercased().contains(searchText.lowercased()) })
+    }
+    
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        self.filteredRepos = nil
     }
 }

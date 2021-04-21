@@ -32,7 +32,15 @@ class LoginViewController: UIViewController {
     }
 
     @objc func performLogin() {
-        NetworkRequest.main.performLogin(contextProvider: self)
+        NetworkRequest.main.performLogin(contextProvider: self) { (isSuccessful) in
+            DispatchQueue.main.async {
+                if isSuccessful {
+                    let homeViewController = HomeViewController.init()
+                    let navController = UINavigationController.init(rootViewController: homeViewController)
+                    self.present(navController, animated: true, completion: nil)
+                }
+            }
+        }
     }
 }
 
