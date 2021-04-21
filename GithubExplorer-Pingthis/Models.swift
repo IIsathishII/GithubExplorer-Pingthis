@@ -11,4 +11,12 @@ struct Repository : Codable {
     var id: String
     var name : String
     var description : String?
+    
+    var issues: [Issue]?
+    var pullRequestCount: Int?
+}
+
+struct Issue : Codable {
+    var title : String
+    var description : String
 }

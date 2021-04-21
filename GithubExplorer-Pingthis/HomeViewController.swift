@@ -97,6 +97,7 @@ extension HomeViewController : UITableViewDelegate, UITableViewDataSource {
         cell.textLabel?.text = currentRepo[indexPath.row].name
         cell.detailTextLabel?.text = currentRepo[indexPath.row].description
         cell.detailTextLabel?.numberOfLines = 0
+        cell.accessoryType = .disclosureIndicator
         return cell
     }
     
@@ -111,6 +112,12 @@ extension HomeViewController : UITableViewDelegate, UITableViewDataSource {
         if editingStyle == .delete {
             self.removeRepositoryFromWatchList(index: indexPath.row)
         }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        let infoVC = RepositoryInfoViewController.init(repo: self.watchlistRepos[indexPath.row])
+        self.navigationController?.pushViewController(infoVC, animated: true)
     }
 }
 

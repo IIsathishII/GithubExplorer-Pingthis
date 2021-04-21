@@ -129,6 +129,42 @@ class NetworkRequest {
         }
     }
     
+    func getRepoIssues(name: String, callback: @escaping ([Issue]) -> ()) {
+        if let url = self.getUrlWithComponents(path: "/repos/\(self.userName!)/\(name)/issues", queryItems: nil) {
+            var request = URLRequest.init(url: url)
+            request.httpMethod = "GET"
+            request.setValue("token \(self.accessToken!)", forHTTPHeaderField: "Authorization")
+            let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+                guard error == nil, data != nil else { return }
+                if let dict = try? JSONSerialization.jsonObject(with: data!, options: []) as? [[String: Any]] {
+                    var issues = [Issue]()
+                    for item in dict {
+                        let issue = Issue.init(title: item["title"] as! String, description: (item["body"] as? String) ?? "No description provided")
+                        issues.append(issue)
+                    }
+                    callback(issues)
+                }
+            }
+            task.resume()
+        }
+    }
+    
+    func getRepoPullRequests(name: String, callback: @escaping (Int)->()) {
+        if let url = self.getUrlWithComponents(path: "/repos/\(self.userName!)/\(name)/pulls", queryItems: nil) {
+            var request = URLRequest.init(url: url)
+            request.httpMethod = "GET"
+            request.setValue("token \(self.accessToken!)", forHTTPHeaderField: "Authorization")
+            let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+                guard error == nil, data != nil else { return }
+                if let dict = try? JSONSerialization.jsonObject(with: data!, options: []) as? [[String: Any]] {
+                    var count = dict.count
+                    callback(count)
+                }
+            }
+            task.resume()
+        }
+    }
+    
     private func getUrlWithComponents(ForHost host: String = "api.github.com", path: String, queryItems: [URLQueryItem]?) -> URL? {
         var urlComponents = URLComponents.init()
         urlComponents.scheme = "https"

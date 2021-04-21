@@ -15,6 +15,9 @@
 		88FE2CC526307E6900C92BB0 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88FE2CC326307E6900C92BB0 /* LoginViewController.swift */; };
 		88FE2CC626307E6900C92BB0 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88FE2CC426307E6900C92BB0 /* HomeViewController.swift */; };
 		88FE2CC926307EAF00C92BB0 /* NetworkRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88FE2CC826307EAF00C92BB0 /* NetworkRequest.swift */; };
+		88FE804A2630BE1F0057614A /* RepositoryInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88FE80472630BE1F0057614A /* RepositoryInfoViewController.swift */; };
+		88FE804B2630BE1F0057614A /* ExploreRepoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88FE80482630BE1F0057614A /* ExploreRepoViewController.swift */; };
+		88FE804C2630BE1F0057614A /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88FE80492630BE1F0057614A /* Models.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +31,9 @@
 		88FE2CC326307E6900C92BB0 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		88FE2CC426307E6900C92BB0 /* HomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		88FE2CC826307EAF00C92BB0 /* NetworkRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkRequest.swift; sourceTree = "<group>"; };
+		88FE80472630BE1F0057614A /* RepositoryInfoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RepositoryInfoViewController.swift; sourceTree = "<group>"; };
+		88FE80482630BE1F0057614A /* ExploreRepoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExploreRepoViewController.swift; sourceTree = "<group>"; };
+		88FE80492630BE1F0057614A /* Models.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +66,9 @@
 		88FE2C982630568900C92BB0 /* GithubExplorer-Pingthis */ = {
 			isa = PBXGroup;
 			children = (
+				88FE80482630BE1F0057614A /* ExploreRepoViewController.swift */,
+				88FE80492630BE1F0057614A /* Models.swift */,
+				88FE80472630BE1F0057614A /* RepositoryInfoViewController.swift */,
 				88FE2CC826307EAF00C92BB0 /* NetworkRequest.swift */,
 				88FE2CC426307E6900C92BB0 /* HomeViewController.swift */,
 				88FE2CC326307E6900C92BB0 /* LoginViewController.swift */,
@@ -145,6 +154,9 @@
 			files = (
 				88FE2CC526307E6900C92BB0 /* LoginViewController.swift in Sources */,
 				88FE2C9A2630568900C92BB0 /* AppDelegate.swift in Sources */,
+				88FE804A2630BE1F0057614A /* RepositoryInfoViewController.swift in Sources */,
+				88FE804C2630BE1F0057614A /* Models.swift in Sources */,
+				88FE804B2630BE1F0057614A /* ExploreRepoViewController.swift in Sources */,
 				88FE2C9C2630568900C92BB0 /* SceneDelegate.swift in Sources */,
 				88FE2CC626307E6900C92BB0 /* HomeViewController.swift in Sources */,
 				88FE2CC926307EAF00C92BB0 /* NetworkRequest.swift in Sources */,
