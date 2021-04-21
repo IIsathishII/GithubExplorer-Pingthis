@@ -48,16 +48,20 @@ class NetworkRequest {
         self.accessToken = nil
     }
     
-    func performLogin(contextProvider: ASWebAuthenticationPresentationContextProviding) {
+    func performLogin(contextProvider: ASWebAuthenticationPresentationContextProviding, callback: @escaping (Bool) -> ()) {
         if let loginUrl = self.getUrlWithComponents(ForHost: "github.com", path: "/login/oauth/authorize", queryItems: [URLQueryItem(name: "client_id", value: self.clientID)]) {
             let authSession = ASWebAuthenticationSession.init(url: loginUrl, callbackURLScheme: self.callbackURLScheme) { (callbackUrl, error) in
-                guard error == nil, let tokenUrl = callbackUrl, let queryItems = URLComponents.init(string: tokenUrl.absoluteString)?.queryItems , let code = queryItems.first(where: { $0.name == "code" })?.value else { return }
+                guard error == nil, let tokenUrl = callbackUrl, let queryItems = URLComponents.init(string: tokenUrl.absoluteString)?.queryItems , let code = queryItems.first(where: { $0.name == "code" })?.value else {
+                    callback(false)
+                    return
+                }
                 if let url = self.getUrlWithComponents(ForHost: "github.com", path: "/login/oauth/access_token", queryItems: [
                     URLQueryItem(name: "client_id", value: "Iv1.c6a2aab38b6147f3"),
                     URLQueryItem(name: "client_secret", value: "de6dffa20ac858c9d034154a943b7bee9bf1cdcd"),
                     URLQueryItem(name: "code", value: code)
                 ]) {
                     var request = URLRequest.init(url: url)
+                    request.httpMethod = "POST"
                     let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
                         guard data != nil, error == nil else { return }
                         if var params = String.init(data: data!, encoding: .utf8) {
@@ -66,13 +70,17 @@ class NetworkRequest {
                                 let val = param.components(separatedBy: "=")
                                 if val[0] == "access_token" {
                                     self.accessToken = val[1]
-                                    self.getUserDetails()
+                                    self.getUserDetails { (isSuccesful) in
+                                        callback(true)
+                                    }
                                 }
                             }
                         }
+                        callback(false)
                     }
                     task.resume()
                 }
+                callback(false)
             }
             authSession.presentationContextProvider = contextProvider
             authSession.prefersEphemeralWebBrowserSession = true
@@ -82,15 +90,39 @@ class NetworkRequest {
         }
     }
     
-    func getUserDetails() {
+    func getUserDetails(callback: @escaping (Bool) -> ()) {
         if let url = self.getUrlWithComponents(path: "/user", queryItems: nil) {
             var request = URLRequest.init(url: url)
             request.httpMethod = "GET"
             request.setValue("token \(self.accessToken!)", forHTTPHeaderField: "Authorization")
             let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
-                guard error == nil, data != nil else { return }
+                guard error == nil, data != nil else {
+                    callback(false)
+                    return
+                }
                 if let dict = try? JSONSerialization.jsonObject(with: data!, options: []) as? [String: Any] {
                     self.userName = dict["login"] as! String
+                    callback(true)
+                }
+                callback(false)
+            }
+            task.resume()
+        }
+    }
+    
+    func getUserRepos(callback: @escaping ([Repository]) -> ()) {
+        if let url = self.getUrlWithComponents(path: "/users/\(self.userName!)/repos", queryItems: nil) {
+            var request = URLRequest.init(url: url)
+            request.httpMethod = "GET"
+            request.setValue("token \(self.accessToken!)", forHTTPHeaderField: "Authorization")
+            let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+                guard error == nil, data != nil else { return }
+                if let dict = try? JSONSerialization.jsonObject(with: data!, options: []) as? [[String: Any]] {
+                    var repos = [Repository]()
+                    for item in dict {
+                        repos.append(Repository.init(id: "\(item["id"]!)", name: item["name"] as! String, description: item["description"] as! String))
+                    }
+                    callback(repos)
                 }
             }
             task.resume()
