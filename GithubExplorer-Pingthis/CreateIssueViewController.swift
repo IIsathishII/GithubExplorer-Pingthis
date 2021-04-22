@@ -10,7 +10,7 @@ import UIKit
 
 class CreateIssueViewController : UITableViewController {
     
-    var insertionCallback : ((Issue) -> ())?
+    var insertionCallback : ((Issue?, IssueStatus) -> ())?
     var repositoryName : String
     
     var titleField: UITextField!
@@ -97,10 +97,16 @@ class CreateIssueViewController : UITableViewController {
             //Show alert
             return
         }
-        NetworkRequest.main.createRepoIssue(name: self.repositoryName, title: self.titleField.text!, description: self.descriptionTextView.text) { (issue) in
+        NetworkRequest.main.createRepoIssue(name: self.repositoryName, title: self.titleField.text!, description: self.descriptionTextView.text) { (issue, status) in
             DispatchQueue.main.async {
-                self.insertionCallback?(issue)
+                self.insertionCallback?(issue, status)
             }
         }
     }
+}
+
+enum IssueStatus {
+    case SUCCESS
+    case FORBIDDEN
+    case FAILED
 }

@@ -37,6 +37,9 @@ class HomeViewController : UIViewController {
         let addRepoButton = UIBarButtonItem.init(barButtonSystemItem: .add, target: self, action: #selector(openExploreRepos))
         self.navigationItem.rightBarButtonItem = addRepoButton
         
+        let signoutButton = UIBarButtonItem.init(title: "Sign out", style: .plain, target: self, action: #selector(performSignout))
+        self.navigationItem.leftBarButtonItem = signoutButton
+        
         let searchController = UISearchController.init()
         searchController.searchBar.delegate = self
         self.navigationItem.searchController = searchController
@@ -50,6 +53,11 @@ class HomeViewController : UIViewController {
         }
         let navigationController = UINavigationController.init(rootViewController: exploreRepoVC)
         self.present(navigationController, animated: true, completion: nil)
+    }
+    
+    @objc func performSignout() {
+        NetworkRequest.main.performLogout()
+        self.view.window?.rootViewController = LoginViewController.init()
     }
     
     func setupTableView() {

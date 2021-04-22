@@ -165,21 +165,28 @@ class NetworkRequest {
         }
     }
     
-    func createRepoIssue(name: String, title: String, description: String, callback: @escaping (Issue)->()) {
-        if let url = self.getUrlWithComponents(path: "/repos/\(self.userName!)/\(name)/issues", queryItems: nil) {//[URLQueryItem.init(name: "title", value: title), URLQueryItem.init(name: "body", value: description)]
+    func createRepoIssue(name: String, title: String, description: String, callback: @escaping (Issue?, IssueStatus)->()) {
+        if let url = self.getUrlWithComponents(path: "/repos/\(self.userName!)/\(name)/issues", queryItems: nil) {
             var request = URLRequest.init(url: url)
             request.httpMethod = "POST"
             var paramDict : [String: Any] = ["title": title, "body": description]
             if let paramData = try? JSONSerialization.data(withJSONObject: paramDict, options: []) {
                 request.httpBody = paramData
             }
-            request.setValue("application/vnd.github.v3+json", forHTTPHeaderField: "accept")
+//            request.setValue("application/vnd.github.v3+json", forHTTPHeaderField: "accept")
             request.setValue("token \(self.accessToken!)", forHTTPHeaderField: "Authorization")
             let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
-                guard error == nil, data != nil else { return }
+                guard error == nil, data != nil else {
+                    callback(nil, .FAILED)
+                    return
+                }
+                if (response as? HTTPURLResponse)?.statusCode == 410 {
+                    callback(nil, .FORBIDDEN)
+                    return
+                }
                 if let dict = try? JSONSerialization.jsonObject(with: data!, options: []) as? [String: Any] {
                     let issue = Issue.init(title: title, description: description)
-                    callback(issue)
+                    callback(issue, .SUCCESS)
                 }
             }
             task.resume()

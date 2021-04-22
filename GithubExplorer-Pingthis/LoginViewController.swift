@@ -42,7 +42,7 @@ class LoginViewController: UIViewController {
                     let homeViewController = HomeViewController.init()
                     let navController = UINavigationController.init(rootViewController: homeViewController)
                     navController.modalPresentationStyle = .fullScreen
-                    self.present(navController, animated: true, completion: nil)
+                    self.view.window?.rootViewController = navController
                 }
             }
         }

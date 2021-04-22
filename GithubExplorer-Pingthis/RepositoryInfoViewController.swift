@@ -94,15 +94,32 @@ class RepositoryInfoViewController : UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
         guard indexPath.row == 0 && indexPath.section == 1 else { return }
         let createVC = CreateIssueViewController.init(repoName: self.repository.name)
-        createVC.insertionCallback = { (issue) in
+        createVC.insertionCallback = { (issue, status) in
             createVC.dismiss(animated: true, completion: nil)
+            guard issue != nil else {
+                self.showIssueFailedAlert(status: status)
+                return
+            }
             if self.repository.issues == nil {
                 self.repository.issues = []
             }
-            self.repository.issues?.insert(issue, at: 0)
+            self.repository.issues?.insert(issue!, at: 0)
             self.tableView.reloadData()
         }
         let navigationController = UINavigationController.init(rootViewController: createVC)
         self.present(navigationController, animated: true, completion: nil)
+    }
+    
+    func showIssueFailedAlert(status: IssueStatus) {
+        if status == .FAILED {
+            let alert = UIAlertController.init(title: "Failed!", message: "Creating an issue failed for some reason.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction.init(title: "Ok", style: .default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+        } else if status == .FORBIDDEN {
+            let alert = UIAlertController.init(title: "Failed!", message: "Creating an issue is not allowed for this repo.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction.init(title: "Ok", style: .default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+        }
+        return
     }
 }
