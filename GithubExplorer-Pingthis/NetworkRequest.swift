@@ -21,11 +21,6 @@ class NetworkRequest {
             UserDefaults.standard.setValue(self.accessToken, forKey: "access_token")
         }
     }
-//    var refreshToken : String? = UserDefaults.standard.string(forKey: "refresh_token") ?? nil {
-//        didSet {
-//            UserDefaults.standard.setValue(self.refreshToken, forKey: "refresh_token")
-//        }
-//    }
     var userName : String? = UserDefaults.standard.string(forKey: "user_name") ?? nil {
         didSet {
             UserDefaults.standard.setValue(self.userName, forKey: "user_name")
@@ -173,7 +168,6 @@ class NetworkRequest {
             if let paramData = try? JSONSerialization.data(withJSONObject: paramDict, options: []) {
                 request.httpBody = paramData
             }
-//            request.setValue("application/vnd.github.v3+json", forHTTPHeaderField: "accept")
             request.setValue("token \(self.accessToken!)", forHTTPHeaderField: "Authorization")
             let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
                 guard error == nil, data != nil else {
