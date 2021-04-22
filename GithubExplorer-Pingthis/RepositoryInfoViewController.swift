@@ -78,6 +78,7 @@ class RepositoryInfoViewController : UITableViewController {
             if indexPath.row == 0 {
                 let cell = UITableViewCell.init(style: .default, reuseIdentifier: nil)
                 cell.textLabel?.text = "Create a new issue"
+                cell.separatorInset = .zero
                 return cell
             } else {
                 let cell = UITableViewCell.init(style: .subtitle, reuseIdentifier: nil)
@@ -87,5 +88,21 @@ class RepositoryInfoViewController : UITableViewController {
                 return cell
             }
         }
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        guard indexPath.row == 0 && indexPath.section == 1 else { return }
+        let createVC = CreateIssueViewController.init(repoName: self.repository.name)
+        createVC.insertionCallback = { (issue) in
+            createVC.dismiss(animated: true, completion: nil)
+            if self.repository.issues == nil {
+                self.repository.issues = []
+            }
+            self.repository.issues?.insert(issue, at: 0)
+            self.tableView.reloadData()
+        }
+        let navigationController = UINavigationController.init(rootViewController: createVC)
+        self.present(navigationController, animated: true, completion: nil)
     }
 }

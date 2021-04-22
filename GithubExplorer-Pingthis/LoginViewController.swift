@@ -19,15 +19,19 @@ class LoginViewController: UIViewController {
     }
 
     func setupLoginButton() {
-        self.loginButton.setTitle("Login Github", for: .normal)
+        self.loginButton.setTitle("Github Login", for: .normal)
         self.loginButton.backgroundColor = .black
         self.loginButton.setTitleColor(.white, for: .normal)
         self.loginButton.addTarget(self, action: #selector(performLogin), for: .touchUpInside)
+        self.loginButton.layer.cornerRadius = 25
+        
         self.view.addSubview(self.loginButton)
         self.loginButton.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             self.loginButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
-            self.loginButton.centerYAnchor.constraint(equalTo: self.view.centerYAnchor)
+            self.loginButton.centerYAnchor.constraint(equalTo: self.view.centerYAnchor),
+            self.loginButton.widthAnchor.constraint(equalToConstant: 200),
+            self.loginButton.heightAnchor.constraint(equalToConstant: 50)
         ])
     }
 
@@ -37,6 +41,7 @@ class LoginViewController: UIViewController {
                 if isSuccessful {
                     let homeViewController = HomeViewController.init()
                     let navController = UINavigationController.init(rootViewController: homeViewController)
+                    navController.modalPresentationStyle = .fullScreen
                     self.present(navController, animated: true, completion: nil)
                 }
             }

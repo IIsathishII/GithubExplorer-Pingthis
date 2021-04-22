@@ -26,12 +26,12 @@ class HomeViewController : UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.title = "Watchlist"
         self.setupTableView()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        self.title = "Watchlist"
         
         self.navigationController?.navigationBar.prefersLargeTitles = true
         let addRepoButton = UIBarButtonItem.init(barButtonSystemItem: .add, target: self, action: #selector(openExploreRepos))
